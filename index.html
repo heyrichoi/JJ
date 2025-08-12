@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쫀지 카제로스 레이드 - 스트라이커 제안서</title>
+    <style>
+        /* 모든 요소에 box-sizing 적용 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* html과 body가 뷰포트 전체 높이를 차지하도록 설정 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-image: url('https://imgur.com/C8zFD93.png'); /* 카제로스 배경 이미지 */
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #ffffff;
+            overflow: hidden; /* body 자체는 스크롤되지 않도록 유지 */
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* 뷰포트 높이 전체 사용 */
+            display: flex; /* 컨테이너를 flex로 만들어 내부 슬라이드를 중앙 정렬 */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide {
+            position: absolute; /* absolute로 유지하여 겹치게 함 */
+            width: 90%; /* 전체 너비의 90%로 확장 */
+            max-width: 1200px; /* 최대 너비 설정 */
+            height: 90vh; /* 전체 높이의 90%로 확장 */
+            max-height: 900px; /* 최대 높이 설정 */
+            padding: 35px 45px 100px 45px; /* 전체적으로 패딩 증가 및 하단 네비게이션 공간 확보 */
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3); /* 슬라이드 배경 불투명도 증가 */
+            border-radius: 25px; /* 둥근 모서리 */
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6); /* 그림자 추가 */
+            overflow-y: hidden; /* 각 슬라이드 자체의 스크롤을 방지 */
+            overflow-x: hidden; /* 가로 스크롤 방지 */
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* 타이틀 슬라이드 */
+        .title-slide {
+            justify-content: center; /* 타이틀 슬라이드는 중앙 정렬 유지 */
+            text-align: center;
+        }
+
+        .main-title-gif {
+            max-width: 350px; /* GIF 크기 조절 */
+            height: auto;
+            margin-bottom: 30px; /* 제목과의 간격 */
+            border-radius: 20px; /* 둥근 모서리 */
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6); /* 그림자 효과 */
+        }
+
+        .main-title {
+            font-size: 3.5rem; /* 폰트 크기 증가 */
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+
+        .main-subtitle {
+            font-size: 1.8rem; /* 폰트 크기 증가 */
+            color: #e0e6ed;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .title-highlight {
+            color: #ff6b6b;
+            font-weight: 800;
+        }
+
+        /* 콘텐츠 슬라이드 */
+        .slide-number {
+            position: absolute;
+            top: 20px; /* 상단 패딩에 맞춰 조절 */
+            right: 20px; /* 우측 패딩에 맞춰 조절 */
+            font-size: 1rem; /* 폰트 크기 증가 */
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 8px 16px; /* 패딩 증가 */
+            border-radius: 20px; /* 보더 라디우스 증가 */
+            font-weight: 600;
+        }
+
+        .slide-title {
+            font-size: 2.8rem; /* 폰트 크기 증가 */
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 35px; /* 마진 증가 */
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .slide-content {
+            /* max-width: 800px; */ /* 제거하여 flex 컨테이너가 더 많은 공간을 활용하도록 함 */
+            width: 100%;
+            flex-grow: 1;
+            padding-right: 0;
+            padding-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .reason-box {
+            background: rgba(255, 255, 255, 0.2); /* 불투명도 증가 */
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px; /* 패딩 증가 */
+            font-size: 1rem; /* 폰트 크기 증가 */
+            line-height: 1.5;
+            width: 100%;
+            height: fit-content;
+        }
+
+        .highlight-text {
+            color: #ffa726;
+            font-weight: 700;
+        }
+
+        .danger-text {
+            color: #ff5252;
+            font-weight: 700;
+        }
+
+        .success-text {
+            color: #66bb6a;
+            font-weight: 700;
+        }
+
+        /* 이미지 컨테이너 및 이미지 스타일 */
+        .image-container {
+            margin: 15px auto;
+            text-align: center;
+            border: 2px solid #ff5252;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 82, 82, 0.1);
+            padding: 3px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+        .content-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+
+        .synergy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .synergy-item {
+            background: rgba(255, 255, 255, 0.08); /* 불투명도 증가 */
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        /* 피증 시너지 아이템 강조 */
+        .synergy-item.highlight-synergy {
+            color: #FFFFFF; /* 텍스트 색상을 흰색으로 변경 */
+            border-color: #ff5252;
+            background: rgba(255, 82, 82, 0.3); /* 배경색 불투명도 유지 */
+        }
+
+
+        .interview-section {
+            background: rgba(255, 255, 255, 0.05); /* 불투명도 증가 */
+            border-left: 4px solid #ff6b6b;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 0 15px 15px 0;
+            width: 100%;
+        }
+
+        .interview-quote {
+            font-size: 1.05rem; /* 폰트 크기 증가 */
+            color: #e8eaed;
+            margin: 15px 0;
+            padding-left: 15px;
+            border-left: 3px solid #ffa726;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .interview-author {
+            text-align: right;
+            color: #ffa726;
+            font-weight: 700;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .streamer-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .streamer-section {
+            background: rgba(255, 255, 255, 0.08); /* 불투명도 증가 */
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .streamer-section h4 {
+            color: #ff6b6b;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .streamer-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .streamer-tag {
+            background: #ff6b6b;
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        /* 스트리머 섹션 내 텍스트 색상 변경 */
+        .streamer-section p {
+            color: #FFFFFF !important; /* 흰색으로 강제 변경 */
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .striker-hope {
+            background: rgba(102, 187, 106, 0.15); /* 불투명도 증가 */
+            border: 1px solid #66bb6a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        /* 헤드 혐오 페이지 (6, 7 페이지 공통) */
+        .head-hate-content {
+            display: flex;
+            flex-direction: row; /* 큰 화면에서는 좌우 배치 */
+            flex-wrap: nowrap; /* 줄바꿈 방지 (최대한 좌우 배치 유지) */
+            gap: 25px; /* 갭 증가 */
+            height: 100%;
+            align-items: flex-start;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .head-hate-content .left-panel {
+            flex: 1; /* 남은 공간 채우기 */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* 내부 섹션 간 간격 */
+            min-width: 300px; /* 텍스트 패널 최소 너비 조정 */
+            height: 100%;
+        }
+        .head-hate-content .right-panel {
+            flex: 2; /* 이미지가 텍스트보다 훨씬 더 많은 공간 차지 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 이미지를 중앙에 배치 */
+            align-items: center;
+            min-width: 500px; /* 이미지 패널 최소 너비 조정 */
+            height: 100%;
+            padding-top: 20px; /* 상단 여백 추가 */
+            overflow-y: auto; /* 이미지 패널만 스크롤 가능 */
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        .head-hate-content .right-panel::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera*/
+        }
+
+        .philosophy-section, .pattern-section {
+            background: rgba(255, 255, 255, 0.1); /* 배경색 더 어둡게, 불투명도 감소 */
+            backdrop-filter: blur(15px); /* 블러 강도 줄임 */
+            border-radius: 12px;
+            padding: 20px; /* 패딩 증가 */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+            width: 100%;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            font-size: 0.95rem; /* 텍스트 크기 증가 */
+            line-height: 1.5;
+            color: #e0e6ed; /* 텍스트 색상 밝게 */
+        }
+        .philosophy-section h4, .pattern-section h4 {
+            font-size: 1.2rem; /* 제목 크기 증가 */
+            margin-bottom: 10px;
+            color: #ffffff; /* 제목 색상 밝게 */
+        }
+        .philosophy-section p, .pattern-section p, .pattern-section ul {
+            flex-grow: 1;
+        }
+        .pattern-list li {
+            font-size: 0.9rem; /* 리스트 아이템 텍스트 크기 증가 */
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.05); /* 리스트 아이템 배경색 추가 */
+            border-radius: 8px;
+        }
+
+
+        .concern-image-container {
+            background: rgba(255, 82, 82, 0.2); /* 불투명도 감소 */
+            border: 1px solid #ff5252;
+            border-radius: 12px;
+            padding: 25px; /* 패딩 증가 */
+            text-align: center;
+            width: 100%;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem; /* 텍스트 크기 증가 */
+            line-height: 1.5;
+            color: #ffffff; /* 텍스트 색상 밝게 */
+            margin-bottom: 20px; /* 이미지 간 간격 */
+        }
+        .concern-image-container p {
+            font-size: 1.1rem; /* 텍스트 크기 증가 */
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-bottom: 10px; /* 텍스트와 이미지 사이 간격 */
+        }
+        .concern-image-container .interview-author {
+            font-size: 0.9rem; /* 텍스트 크기 증가 */
+            color: #ff8a8a;
+            margin-top: 10px;
+        }
+        .concern-image-container .content-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 82, 82, 0.4); /* 이미지 그림자 추가 */
+            cursor: pointer; /* 클릭 가능한 이미지임을 표시 */
+        }
+
+
+        .section-title {
+            color: #ff6b6b;
+            font-size: 1.3rem; /* 폰트 크기 증가 */
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* 패턴 이미지 갤러리 */
+        .pattern-images {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px; /* 갭 증가 */
+            margin-top: auto;
+            width: 100%;
+            align-items: flex-end;
+            padding-top: 20px;
+        }
+        .pattern-img {
+            max-width: 100%; /* 이미지를 크게 보이도록 100%로 설정 */
+            height: auto;
+            border-radius: 15px; /* 보더 라디우스 증가 */
+            border: 2px solid rgba(255,255,255,0.3); /* 보더 두께 및 불투명도 증가 */
+            object-fit: contain;
+            flex-grow: 1;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5); /* 그림자 추가 */
+            cursor: pointer; /* 클릭 가능한 이미지임을 표시 */
+        }
+
+
+        .epic-conclusion {
+            background: rgba(255, 107, 107, 0.15);
+            border: 2px solid #ff6b6b;
+            border-radius: 18px;
+            padding: 25px;
+            text-align: center;
+            font-size: 1rem;
+            line-height: 1.5;
+            width: 100%;
+            height: fit-content;
+        }
+
+        /* 결론 페이지 특별 스타일 */
+        .final-conclusion {
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #ff6b6b;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            max-height: calc(100vh - 140px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .striker-highlight {
+            font-size: 2.5rem !important;
+            font-weight: 900 !important;
+            color: #ff6b6b !important;
+            display: inline-block;
+        }
+
+        .final-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            color: #ffa726;
+        }
+
+        .final-key-section {
+            background: rgba(255, 107, 107, 0.25);
+            padding: 20px;
+            border-radius: 18px;
+            border: 2px solid #ff6b6b;
+            margin: 12px 0;
+            height: fit-content;
+            position: relative;
+            z-index: 1;
+        }
+
+        .key-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .final-legend {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 10px;
+        }
+
+        /* 네비게이션 */
+        .nav-container {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn {
+            background: rgba(255, 107, 107, 0.25);
+            border: 1px solid #ff6b6b;
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: #ff6b6b;
+            color: #ffffff;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+        }
+
+        .nav-dot.active {
+            background: #ff6b6b;
+            transform: scale(1.2);
+        }
+
+        /* 마우스 따라다니는 토끼 */
+        #mouse-rabbit {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            width: 50px; /* 크기 조절: 더 크게 */
+            height: auto;
+            transform: translateX(-50%);
+            transform-origin: 50% 0%;
+            display: none;
+        }
+
+        /* 마우스 멈췄을 때 달랑거리는 애니메이션 (2번 후 정지) */
+        @keyframes final-dangle-swing {
+            0% { transform: translateX(-50%) rotate(-30deg); } /* 초기 큰 스윙 */
+            25% { transform: translateX(-50%) rotate(30deg); }
+            50% { transform: translateX(-50%) rotate(-15deg); }
+            75% { transform: translateX(-50%) rotate(15deg); }
+            100% { transform: translateX(-50%) rotate(0deg); }
+        }
+        .final-swings {
+            animation: final-dangle-swing 1.4s ease-out forwards; /* 애니메이션 지속 시간 0.7s * 2 = 1.4s */
+            animation-iteration-count: 2;
+        }
+
+        /* 8페이지 이미지 애니메이션 */
+        @keyframes slide-across-and-fade {
+            0% {
+                left: 100%;
+                opacity: 1;
+                transform: translateY(-50%);
+            }
+            90% {
+                opacity: 0.2;
+            }
+            100% {
+                left: -100%;
+                opacity: 0;
+                transform: translateY(-50%);
+            }
+        }
+
+        .slide-image-8 {
+            position: absolute;
+            top: 50%;
+            width: 70%; /* 이미지 크기 조절 */
+            height: auto;
+            opacity: 0;
+            pointer-events: none;
+            left: 100%;
+            transform: translateY(-50%);
+        }
+
+        /* When slide 8 (index 7) is active, trigger the animation */
+        .slide.active #slide-8-image {
+            animation: slide-across-and-fade 2.5s ease-out forwards; /* 애니메이션 시간 증가 */
+        }
+
+
+        /* 9페이지 이미지 애니메이션 */
+        @keyframes zoom-fade {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .slide-image-9 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* When slide 9 (index 8) is active, trigger the animation */
+        .slide.active #slide-9-image {
+            animation: zoom-fade 0.8s ease-out forwards;
+        }
+
+        /* 결론 페이지 반짝이는 이펙트 */
+        @keyframes sparkle-fade {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: sparkle-fade 2s infinite ease-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 이미지 모달 스타일 */
+        .modal {
+            display: none; /* 기본적으로 숨김 */
+            position: fixed; /* 전체 화면을 덮도록 설정 */
+            z-index: 1001; /* 다른 요소들 위에 표시 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* 필요 시 스크롤 허용 */
+            background-color: rgba(0,0,0,0.9); /* 어두운 배경 */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-image {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 70vh; /* 이미지 높이 제한 */
+            display: block;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        /* 모달 설명 텍스트는 이제 사용하지 않음 */
+        /* .modal-description {
+            color: #f1f1f1;
+            font-size: 1.2rem;
+            padding: 15px 0;
+            text-align: center;
+            max-width: 80%;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+        } */
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 이미지 클릭 안내 문구 */
+        .click-to-enlarge-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            display: block; /* 항상 보이도록 */
+        }
+
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .slide { padding: 25px 25px 70px 25px; max-width: 90%; max-height: 700px; }
+            .main-title { font-size: 2.8rem; }
+            .main-subtitle { font-size: 1.5rem; }
+            .slide-title { font-size: 2.2rem; }
+            .reason-box { padding: 20px; font-size: 0.95rem; }
+            .synergy-grid { gap: 8px; }
+            .synergy-item { padding: 10px; font-size: 0.85rem; }
+            /* 6, 7 페이지 레이아웃: 1200px 이하에서도 좌우 배치 유지 */
+            .head-hate-content { flex-direction: row; flex-wrap: wrap; gap: 15px; }
+            .head-hate-content .left-panel, .head-hate-content .right-panel { min-width: 45%; height: auto; padding-top: 0; }
+            .philosophy-section, .pattern-section { font-size: 0.85rem; padding: 15px; }
+            .philosophy-section h4, .pattern-section h4 { font-size: 1.05rem; }
+            .pattern-list li { font-size: 0.8rem; padding: 8px 12px; }
+            .pattern-img { max-width: 100%; /* max-height: 300px; */ } /* 이미지 높이 제한 조정 */
+            .concern-image-container { padding: 15px; font-size: 0.9rem; }
+            .concern-image-container p { font-size: 1rem; }
+            .concern-image-container .interview-author { font-size: 0.8rem; }
+            .concern-image-container .content-image { /* max-height: 300px; */ }
+            .modal-image { max-height: 60vh; } /* 모달 이미지 반응형 조정 */
+            /* .modal-description { font-size: 1rem; padding: 10px 0;} */
+            .final-title { font-size: 1.6rem; }
+            .striker-highlight { font-size: 2.2rem !important; }
+            .final-key-section { padding: 15px; }
+            .key-icon { font-size: 2.2rem; }
+            .final-legend { font-size: 1.1rem; }
+            .click-to-enlarge-text { font-size: 0.8rem; padding: 3px 8px; }
+        }
+
+        @media (max-width: 768px) {
+            .slide { padding: 20px 15px 60px 15px; width: 95%; height: 95vh; max-height: 600px; }
+            .main-title-gif { max-width: 200px; margin-bottom: 15px; }
+            .main-title { font-size: 2rem; }
+            .main-subtitle { font-size: 1.2rem; }
+            .slide-title { font-size: 1.8rem; }
+            .reason-box, .interview-section, .streamer-section, .epic-conclusion, .final-conclusion {
+                padding: 15px;
+                font-size: 0.85rem;
+            }
+            .synergy-grid { grid-template-columns: 1fr; gap: 6px; }
+            .synergy-item { padding: 8px; font-size: 0.8rem; }
+            .streamer-showcase { grid-template-columns: 1fr; }
+            /* 6, 7 페이지 레이아웃: 768px 이하에서는 세로 배치 */
+            .head-hate-content { flex-direction: column; gap: 10px; }
+            .head-hate-content .left-panel, .head-hate-content .right-panel { min-width: 100%; height: auto; padding-top: 0; }
+            .philosophy-section, .pattern-section { min-width: 100%; font-size: 0.8rem; padding: 12px; }
+            .philosophy-section h4, .pattern-section h4 { font-size: 1rem; margin-bottom: 5px;}
+            .pattern-list li { font-size: 0.75rem; padding: 6px 10px; margin: 4px 0;}
+            .pattern-img { max-width: 100%; /* max-height: 200px; */ border-radius: 10px; } /* 이미지 높이 제한 조정 */
+            .concern-image-container { margin-top: 10px; padding: 12px; font-size: 0.85rem; }
+            .concern-image-container p { font-size: 0.9rem; margin-bottom: 8px;}
+            .concern-image-container .interview-author { font-size: 0.75rem; margin-top: 5px;}
+            .concern-image-container .content-image { /* max-height: 200px; */ border-radius: 8px;}
+            .modal-image { max-height: 50vh; } /* 모달 이미지 반응형 조정 */
+            /* .modal-description { font-size: 0.9rem; padding: 8px 0;} */
+            .modal-close { top: 10px; right: 20px; font-size: 30px;}
+            .final-title { font-size: 1.4rem; }
+            .striker-highlight { font-size: 2rem !important; }
+            .final-key-section { padding: 12px; }
+            .key-icon { font-size: 2rem; }
+            .final-legend { font-size: 0.9rem; }
+            .nav-container { padding: 6px; gap: 4px; bottom: 8px; }
+            .nav-btn { padding: 5px 8px; font-size: 0.7rem; }
+            .nav-dots { right: 8px; gap: 4px; }
+            .nav-dot { width: 6px; height: 6px; }
+            #mouse-rabbit { width: 30px; }
+            .click-to-enlarge-text { font-size: 0.75rem; padding: 2px 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- 슬라이드 1: 타이틀 -->
+        <div class="slide title-slide active">
+            <img src="https://i.imgur.com/ObDC5tA.gif" alt="카제로스 레이드 GIF" class="main-title-gif">
+            <h1 class="main-title">카제로스 레이드 정복</h1>
+            <h2 class="main-subtitle">쫀지가 <span class="title-highlight">스트라이커</span>로 가야 하는 6가지 이유</h2>
+        </div>
+
+        <!-- 슬라이드 2: 브레이커의 몰락 -->
+        <div class="slide content-slide">
+            <div class="slide-number">1 / 9</div>
+            <h2 class="slide-title">브레이커의 몰락, 현실을 직시하자</h2>
+            <div class="slide-content">
+                <div class="reason-box">
+                    <p>현재 브레이커의 지표가 <span class="danger-text">바닥을 치고 있습니다</span>. 권왕과 수라 두 스펙 모두 폿밑딜 수준으로 떨어진 상황에서, 과연 브레이커로 카제로스에서 살아남을 수 있을까요?</p>
+                    
+                    <div class="image-container">
+                        <img src="https://imgur.com/4aIpv1Z.jpg" alt="최하위 지표(폿밑딜) 자료" class="content-image">
+                    </div>
+                    
+                    <p style="text-align: center; font-size: 0.9rem; margin-top: 10px;">
+                        <span class="danger-text">위기의 브레이커</span> vs <span class="success-text">안정적인 스트라이커</span><br>
+                        <strong class="highlight-text">선택은 명확합니다!</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 3: 피증 시너지 문제 -->
+        <div class="slide content-slide">
+            <div class="slide-number">2 / 9</div>
+            <h2 class="slide-title">"피증은 이제 그만!" - 치적 시너지의 필요성</h2>
+            <div class="slide-content">
+                <div class="reason-box">
+                    <p>현재 로사단 시너지 구성을 보면 <span class="danger-text">피증이 너무 많습니다!</span></p>
+                    
+                    <div class="synergy-grid">
+                        <div class="synergy-item">워로드<br><small>(방깍+백헤드)</small></div>
+                        <div class="synergy-item highlight-synergy">소서리스<br><small>(피증)</small></div>
+                        <div class="synergy-item">창술<br><small>(치피증)</small></div>
+                        <div class="synergy-item">블레이드<br><small>(백헤드)</small></div>
+                        <div class="synergy-item highlight-synergy">버서커<br><small>(피증)</small></div>
+                        <div class="synergy-item highlight-synergy">브레이커<br><small>(피증) 곤대장님까지?</small></div>
+                    </div>
+                    
+                    <p style="text-align: center; font-size: 0.9rem; margin-top: 10px;">
+                        <span class="danger-text">피증 3명은 과다!</span><br>
+                        공대에 없는 유일한 <span class="success-text">치적 시너지</span>가 절실합니다!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 4: 인터뷰 -->
+        <div class="slide content-slide">
+            <div class="slide-number">3 / 9</div>
+            <h2 class="slide-title">아크라시아 주민들의 생생한 증언</h2>
+            <div class="slide-content">
+                <div class="interview-section">
+                    <div class="interview-quote">
+                        저는 블레이드인데, 치적이 정말 좋아요. 피증보다 훨씬 체감됩니다! 제 버스트가 크리가 안터지는 모습을 보는게 너무 슬퍼요
+                    </div>
+                    <div class="interview-author">- 블레이드 6캐릭 나이스단 김모씨</div>
+
+                    <div class="interview-quote">
+                        워로드로 레이드 다니는데 치적 시너지 있으면 치명타 확률이 확실히 올라가요. 제 한 방 한 방이 강해지는게 절실히 보입니다.
+                    </div>
+                    <div class="interview-author">- 5년차 워로드 유저 박모씨</div>
+
+                    <div class="interview-quote">
+                        피증 중복은 정말 비효율적이에요. 피증이 너무 많아서, 로사단인지 피증사랑단인지 모르겠어요. 치적이 답입니다!
+                    </div>
+                    <div class="interview-author">- 로스트아크 톡방을 운영하는 성모씨</div>
+
+                    <div class="interview-quote">
+                        곤대장님 마저 없으면 저희는...
+                    </div>
+                    <div class="interview-author">- 곤대장님을 보고 스트라이커를 키운 리모씨</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 5: 스트라이커 스트리머 부재 -->
+        <div class="slide content-slide">
+            <div class="slide-number">4 / 9</div>
+            <h2 class="slide-title">스트라이커 스트리머의 부재 - 유니크함의 힘</h2>
+            <div class="slide-content">
+                <div class="reason-box">
+                    <div class="streamer-showcase">
+                        <div class="streamer-section">
+                            <h4>🔥 현재 브레이커 스트리머들</h4>
+                            <div class="streamer-list">
+                                <div class="streamer-tag">이다님</div>
+                                <div class="streamer-tag">보라냥이집사님</div>
+                                <div class="streamer-tag">기타 다수...</div>
+                            </div>
+                            <p>너무 흔해진 브레이커!</p>
+                        </div>
+                        
+                        <div class="streamer-section">
+                            <h4>⭐ 카멘 탑텐 공대 스트라이커</h4>
+                            <div class="streamer-list">
+                                <div class="streamer-tag">세종시님</div>
+                                <div class="streamer-tag">곤대장님</div>
+                            </div>
+                            <p>단 2명뿐이었던 희귀함!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="striker-hope">
+                        <h3 style="color: #66bb6a; margin-bottom: 6px; font-size: 1rem;">🚀 스트라이커의 희망이 되어주세요!</h3>
+                        <img src="https://imgur.com/TJrwUPF.png" alt="굿 토끼 이미지" class="content-image" style="max-width: 80px; margin-top: 8px; border: none;">
+                        <p style="font-size: 0.95rem;">곤대장님만 기다리고 있습니다...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 6: 트라이에서의 헤드 혐오 (1) - 주먹 철학 & 패턴 분석 -->
+        <div class="slide content-slide">
+            <div class="slide-number">5 / 9</div>
+            <h2 class="slide-title">트라이에서의 헤드 혐오 (1)</h2>
+            <div class="slide-content">
+                <div class="head-hate-content">
+                    <div class="left-panel">
+                        <div class="philosophy-section">
+                            <h4 class="section-title">🥊 곤대장님의 주먹 철학</h4>
+                            <p>
+                                그동안 레이드를 생각해 보십시오... <span class="highlight-text">항상 헤드를 혐오해왔죠</span>.<br><br>
+                                곤대장님이라도 주먹을 <span class="success-text">앞으로 내지르지</span> <span class="danger-text">뒤로 내지르진 않지 않습니까?</span>
+                            </p>
+                        </div>
+
+                        <div class="pattern-section">
+                            <h4 class="section-title">📹 카제로스 패턴 분석</h4>
+                            <ul class="pattern-list">
+                                <li>🔥 앞을 연속으로 날려버리는 패턴</li>
+                                <li>👊 앞을 때리는 패턴</li>
+                                <li>✅ 백이 안전인 것으로 보이는 패턴이 다수</li>
+                                <li>⚠️ 헤드 위치는 지속적으로 위험한 상황</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="right-panel">
+                        <div class="pattern-images">
+                            <img src="https://imgur.com/jzoQ5BV.jpg" alt="헤드 패턴 자료 1" class="pattern-img" onclick="openModal('https://imgur.com/jzoQ5BV.jpg')">
+                            <img src="https://imgur.com/OrUI5Ws.jpg" alt="헤드 패턴 자료 2" class="pattern-img" onclick="openModal('https://imgur.com/OrUI5Ws.jpg')">
+                            <img src="https://imgur.com/xNmax82.jpg" alt="헤드 패턴 자료 3" class="pattern-img" onclick="openModal('https://imgur.com/xNmax82.jpg')">
+                        </div>
+                        <span class="click-to-enlarge-text">이미지를 클릭하면 크게 볼 수 있습니다.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 7: 트라이에서의 헤드 혐오 (2) - 브레이커의 딜레마 -->
+        <div class="slide content-slide">
+            <div class="slide-number">6 / 9</div>
+            <h2 class="slide-title">트라이에서의 헤드 혐오 (2)</h2>
+            <div class="slide-content">
+                <div class="head-hate-content">
+                    <div class="left-panel">
+                        <div class="philosophy-section"> <!-- concern-section 대신 philosophy-section 재활용 -->
+                            <h4 class="section-title">💔 브레이커의 딜레마</h4>
+                            <p>
+                                서포터도 트라이때는 똑같이 패턴을 모르기 때문에 헤드에서 버티기가 쉽지 않습니다... 소서리스도 그렇구요.<br><br>
+                                
+                                그렇다면 옆구리나 백에 있는 서포터or딜러쪽으로 머리가 훽훽?<br><br>
+                                
+                                서포터인 워로드와는 다르게 <span class="danger-text">퓨어-딜러 곤대장님의 아름다운 수라가 똥꼬를 찌르는 모습</span>을 보고있어야 하다니 마음이 아픕니다.<br><br>
+                                
+                                <span class="highlight-text">브레이커의 한땀한땀 모은 수라가 공중분해 되는 것보다는<br>
+                                스트라이커가 한 번 빗나가는게 낫지 않을까...</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right-panel">
+                        <div class="concern-image-container">
+                            <p>
+                                "이제 블레이드한테 모든 걸 맡길게..." 😔
+                            </p>
+                            <p class="interview-author">
+                                - 해탈한 브레이커의 마지막 고백
+                            </p>
+                            <img src="https://imgur.com/fRxdcME.jpg" alt="해탈해서 블레이드에게 모든 걸 맡기는 브레이커" class="content-image" onclick="openModal('https://imgur.com/fRxdcME.jpg')">
+                        </div>
+                        <span class="click-to-enlarge-text">이미지를 클릭하면 크게 볼 수 있습니다.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 8: 추억과 서사 (1) -->
+        <div class="slide content-slide">
+            <img id="slide-8-image" class="slide-image-8" src="https://imgur.com/BivvxZu.png" alt="슬라이드 8 이미지">
+            <div class="slide-number">7 / 9</div>
+            <h2 class="slide-title">쫀숭이들과의 추억 & 서사의 완성 (1)</h2>
+            <div class="slide-content">
+                <div class="reason-box">
+                    <div style="margin-bottom: 15px;">
+                        <h3 style="color: #ff6b6b; margin-bottom: 10px; font-size: 1.1rem; font-weight: 700;">💝 쫀숭이들과의 소중한 추억</h3>
+                        <p style="font-size: 0.95rem; line-height: 1.5;">
+                            카멘 로드 유입으로 시작된 곤대장님이지만, <span class="highlight-text">리트라이커의 의지</span>를 이어받아 쫀숭이들과 함께 만들어온 특별한 스토리가 있습니다.
+                        </p>
+                        
+                        <div style="background: rgba(255, 107, 107, 0.1); padding: 15px; border-radius: 8px; margin: 10px 0; text-align: center; border: 1px solid #ff6b6b;">
+                            <p style="font-size: 1rem; font-weight: 600;">
+                                "스트라이커는 단순한 캐릭터가 아닙니다.<br>
+                                쫀숭이들과 함께 만들어온 <span class="highlight-text">추억의 상징</span>입니다."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 9: 추억과 서사 (2) -->
+        <div class="slide content-slide">
+            <img id="slide-9-image" class="slide-image-9" src="https://imgur.com/B9NF7b5.png" alt="슬라이드 9 이미지">
+            <div class="slide-number">8 / 9</div>
+            <h2 class="slide-title">쫀숭이들과의 추억 & 서사의 완성 (2)</h2>
+            <div class="slide-content">
+                <div class="epic-conclusion">
+                    <div class="epic-text">
+                        <h3 style="color: #ff6b6b; font-size: 1.5rem; margin-bottom: 12px; font-weight: 800;">📖 완벽한 서사의 완성</h3>
+                        
+                        <p style="font-size: 0.95rem;">카멘 더퍼 클리어 당시 <strong>'스트라이커'</strong>로 참가했던 곤대장님...</p>
+                        <p style="font-size: 0.95rem;">정지를 먹은 후 <strong>'착해진 쫀지'</strong>로 돌아와서...</p>
+                        <p style="font-size: 0.95rem;">또 한 번의 더퍼스트에서 <strong>'착해진 쫀지'</strong> 캐릭터로 퍼클을 한다면?</p>
+                        
+                        <div style="margin: 12px 0; font-size: 1rem; font-weight: 700;">
+                            <strong class="highlight-text">과거의 영광 → 시련과 성찰 → 화려한 부활</strong>
+                        </div>
+                        
+                        <p style="font-size: 1.1rem; font-weight: 700;" class="highlight-text">
+                            이보다 더 완벽한 스토리가 있을까요?
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 슬라이드 10: 결론 -->
+        <div class="slide content-slide">
+            <div class="slide-number">9 / 9</div>
+            <h2 class="slide-title">결론</h2>
+            <div class="slide-content">
+                <div class="final-conclusion">
+                    <!-- 반짝이는 이펙트 요소들 -->
+                    <div class="sparkle" style="width: 20px; height: 20px; top: 10%; left: 20%; animation-delay: 0s; animation-duration: 2s;"></div>
+                    <div class="sparkle" style="width: 15px; height: 15px; top: 30%; left: 80%; animation-delay: 0.5s; animation-duration: 2.5s;"></div>
+                    <div class="sparkle" style="width: 25px; height: 25px; top: 50%; left: 40%; animation-delay: 1s; animation-duration: 3s;"></div>
+                    <div class="sparkle" style="width: 18px; height: 18px; top: 70%; left: 60%; animation-delay: 1.5s; animation-duration: 2.2s;"></div>
+                    <div class="sparkle" style="width: 22px; height: 22px; top: 85%; left: 10%; animation-delay: 2s; animation-duration: 2.8s;"></div>
+                    <div class="sparkle" style="width: 17px; height: 17px; top: 25%; left: 50%; animation-delay: 0.2s; animation-duration: 2.1s;"></div>
+                    <div class="sparkle" style="width: 20px; height: 20px; top: 60%; left: 90%; animation-delay: 0.7s; animation-duration: 2.6s;"></div>
+                    
+                    <div class="epic-text">
+                        <h3 class="final-title">데이터, 시너지, 차별화, 추억, 서사까지...</h3>
+                        
+                        <p style="font-size: 1.5rem; margin-bottom: 25px; font-weight: 600; color: #ffffff;">
+                            모든 것이 <span class="striker-highlight">스트라이커</span>를 가리키고 있습니다!
+                        </p>
+                        
+                        <div class="final-key-section">
+                            <div class="key-icon">🎯</div>
+                            <p style="font-size: 1.5rem; margin-bottom: 10px; font-weight: 800; color: #ffffff;">
+                                <strong>카제로스 퍼클의 열쇠</strong>
+                            </p>
+                            <p class="final-legend">
+                                곤대장님, <span class="striker-highlight" style="font-size: 1.8rem !important;">스트라이커</span>로 전설을 써내려가세요!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이미지 모달 -->
+    <div id="imageModal" class="modal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <img class="modal-content modal-image" id="modalImage">
+    </div>
+
+    <!-- 마우스 따라다니는 토끼 이미지 -->
+    <img id="mouse-rabbit" src="https://imgur.com/aMK5jQk.png" alt="마우스 따라다니는 토끼">
+
+    <!-- 네비게이션 -->
+    <div class="nav-container">
+        <button class="nav-btn active" onclick="goToSlide(0)">시작</button>
+        <button class="nav-btn" onclick="previousSlide()">◀ 이전</button>
+        <button class="nav-btn" onclick="nextSlide()">다음 ▶</button>
+        <button class="nav-btn" onclick="goToSlide(slides.length-1)">결론</button>
+    </div>
+
+    <div class="nav-dots">
+        <div class="nav-dot active" onclick="goToSlide(0)"></div>
+        <div class="nav-dot" onclick="goToSlide(1)"></div>
+        <div class="nav-dot" onclick="goToSlide(2)"></div>
+        <div class="nav-dot" onclick="goToSlide(3)"></div>
+        <div class="nav-dot" onclick="goToSlide(4)"></div>
+        <div class="nav-dot" onclick="goToSlide(5)"></div>
+        <div class="nav-dot" onclick="goToSlide(6)"></div>
+        <div class="nav-dot" onclick="goToSlide(7)"></div>
+        <div class="nav-dot" onclick="goToSlide(8)"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const navDots = document.querySelectorAll('.nav-dot');
+        let currentSlide = 0;
+
+        // 슬라이드 애니메이션 이미지 요소 가져오기
+        const slide8Image = document.getElementById('slide-8-image');
+        const slide9Image = document.getElementById('slide-9-image');
+
+        // 이미지 모달 요소 가져오기
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+
+        // 총 슬라이드 개수 업데이트
+        const totalSlides = slides.length; 
+        
+        function updateSlide(newSlide) {
+            // 이전 슬라이드의 이미지 애니메이션 제거 및 초기 상태로 리셋
+            if (currentSlide === 7 && slide8Image) { // 슬라이드 8 (실제 인덱스 7)
+                slide8Image.classList.remove('slide-across-and-fade'); // 애니메이션 클래스 제거
+                slide8Image.style.opacity = '0'; // 투명하게 숨김
+                slide8Image.style.left = '100%'; // 초기 위치로 되돌림
+            } else if (currentSlide === 8 && slide9Image) { // 슬라이드 9 (실제 인덱스 8)
+                slide9Image.classList.remove('zoom-fade'); // 애니메이션 클래스 제거
+                slide9Image.style.opacity = '0'; // 투명하게 숨김
+                slide9Image.style.transform = 'translate(-50%, -50%) scale(0.5)'; // 초기 스케일로 되돌림
+            }
+
+            slides[currentSlide].classList.remove('active');
+            slides[newSlide].classList.add('active');
+            currentSlide = newSlide;
+            
+            navDots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+            // 슬라이드 번호 업데이트
+            const slideNumberElement = slides[currentSlide].querySelector('.slide-number');
+            if (slideNumberElement) {
+                slideNumberElement.textContent = `${currentSlide + 1} / ${totalSlides}`;
+            }
+
+            // 새 슬라이드에 따라 이미지 애니메이션 트리거
+            if (newSlide === 7 && slide8Image) { // 슬라이드 8 (실제 인덱스 7) 진입 시
+                void slide8Image.offsetWidth; // Reflow 강제 (애니메이션 재시작 트릭)
+                slide8Image.classList.add('slide-across-and-fade');
+            } else if (newSlide === 8 && slide9Image) { // 슬라이드 9 (실제 인덱스 8) 진입 시
+                void slide9Image.offsetWidth; // Reflow 강제
+                slide9Image.classList.add('zoom-fade');
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                updateSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                updateSlide(currentSlide - 1);
+            }
+        }
+
+        function goToSlide(slideIndex) {
+            if (slideIndex >= 0 && slideIndex < slides.length && slideIndex !== currentSlide) {
+                updateSlide(slideIndex);
+            }
+        }
+
+        // 이미지 모달 열기 함수 (설명 제거)
+        function openModal(imageSrc) {
+            modalImage.src = imageSrc;
+            imageModal.style.display = 'flex'; // flex로 설정하여 중앙 정렬 적용
+        }
+
+        // 이미지 모달 닫기 함수
+        function closeModal() {
+            imageModal.style.display = 'none';
+        }
+
+        // 키보드 네비게이션
+        document.addEventListener('keydown', (e) => {
+            if (imageModal.style.display === 'flex') { // 모달이 열려 있을 때 ESC 키로 닫기
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+                return; // 모달이 열려있을 땐 슬라이드 이동 방지
+            }
+
+            switch(e.key) {
+                case 'ArrowRight':
+                case ' ':
+                    e.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    previousSlide();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    goToSlide(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    goToSlide(slides.length - 1);
+                    break;
+            }
+        });
+
+        // 클릭으로 다음 슬라이드 (상호작용 중이 아닐 때만)
+        let isInteracting = false;
+
+        document.addEventListener('selectstart', () => { isInteracting = true; });
+        document.addEventListener('mouseup', () => { 
+            setTimeout(() => { isInteracting = false; }, 100);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (imageModal.style.display === 'flex') { // 모달이 열려 있을 때 모달 외부 클릭 시 닫기
+                if (e.target === imageModal || e.target === modalImage) {
+                    closeModal();
+                }
+                return;
+            }
+
+            const selection = window.getSelection();
+            if (selection.toString().length > 0 || isInteracting) {
+                return;
+            }
+            
+            // 이미지 클릭 시 슬라이드 이동 방지 (openModal이 처리)
+            if (e.target.closest('.pattern-img') || e.target.closest('.content-image')) {
+                return;
+            }
+
+            if (!e.target.closest('.nav-container') && 
+                !e.target.closest('.nav-dots') && 
+                !e.target.closest('button') &&
+                !e.target.closest('a') &&
+                !e.target.closest('#mouse-rabbit')) { /* 토끼 이미지 클릭 시 다음 슬라이드로 넘어가지 않도록 추가 */
+                nextSlide();
+            }
+        });
+
+        // 터치 스와이프 지원
+        let startX = 0;
+        let endX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            if (imageModal.style.display === 'flex') return; // 모달 열려 있을 땐 스와이프 방지
+            startX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (imageModal.style.display === 'flex') return; // 모달 열려 있을 땐 스와이프 방지
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const difference = startX - endX;
+            if (Math.abs(difference) > 50) {
+                if (difference > 0) {
+                    nextSlide();
+                } else {
+                    previousSlide();
+                }
+            }
+        }
+
+        // 마우스 따라다니는 토끼 기능
+        const mouseRabbit = document.getElementById('mouse-rabbit');
+        let mouseX = 0;
+        let mouseY = 0;
+        let lastMouseX = 0; // 이전 마우스 X 좌표
+        let animationFrameId = null; // requestAnimationFrame ID
+        let inactivityTimeout = null; // 마우스 비활동 감지 타이머
+        const INACTIVITY_TIME = 10000; // 10초 (10000ms)
+
+        function updateRabbitPosition() {
+            // 이미지의 상단이 마우스에 오도록 위치 조정 (Y축은 마우스 위치 그대로 사용)
+            mouseRabbit.style.left = mouseX + 'px';
+            mouseRabbit.style.top = mouseY + 'px';
+
+            const deltaX = mouseX - lastMouseX;
+            let tiltAmount = deltaX * 2.0; // 마우스 움직임에 따른 기울기 강도 (더욱 크게)
+            tiltAmount = Math.max(-45, Math.min(45, tiltAmount)); // 기울기 각도 제한 늘림
+            
+            // 회전축을 이미지 상단 중앙으로 설정
+            mouseRabbit.style.transform = `translateX(-50%) rotateZ(${tiltAmount}deg)`;
+            
+            lastMouseX = mouseX; // 현재 X좌표를 이전 X좌표로 업데이트
+            animationFrameId = requestAnimationFrame(updateRabbitPosition);
+        }
+
+        // 마우스 움직임 감지
+        document.addEventListener('mousemove', (e) => {
+            if (imageModal.style.display === 'flex') { // 모달이 열려 있을 땐 토끼 숨기기
+                mouseRabbit.style.display = 'none';
+                return;
+            }
+
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            mouseRabbit.style.display = 'block'; // 마우스 움직임 감지 시 토끼 보이기
+
+            // 애니메이션 프레임이 실행 중이 아니면 시작
+            if (animationFrameId === null) {
+                animationFrameId = requestAnimationFrame(updateRabbitPosition);
+            }
+
+            // 이전 비활동 감지 타이머 클리어
+            clearTimeout(inactivityTimeout);
+
+            // 최종 스윙 애니메이션 클래스 제거 (움직임이 재개되면)
+            mouseRabbit.classList.remove('final-swings');
+
+            // 마우스 비활동 감지 타이머 설정
+            inactivityTimeout = setTimeout(() => {
+                // 10초 동안 움직임이 없으면 토끼 숨기기
+                mouseRabbit.classList.add('final-swings'); // 멈췄을 때 최종 스윙 애니메이션 적용
+                setTimeout(() => {
+                    mouseRabbit.style.display = 'none';
+                    mouseRabbit.classList.remove('final-swings'); // 애니메이션 클래스 제거
+                    mouseRabbit.style.transform = 'translateX(-50%) rotateZ(0deg)'; // 최종적으로 정지 상태로
+                    cancelAnimationFrame(animationFrameId); // 애니메이션 프레임 중지
+                    animationFrameId = null; // ID 초기화
+                }, 1500); // final-swings 애니메이션 duration * iteration-count (0.7s * 2 = 1.4s) + 약간의 여유
+            }, INACTIVITY_TIME); // 10초 (설정된 시간) 동안 움직임이 없으면
+        });
+
+        // 마우스가 문서 밖으로 나가면 토끼 숨기기 및 상태 초기화
+        document.addEventListener('mouseleave', () => {
+            clearTimeout(inactivityTimeout); // 비활동 타이머 클리어
+            cancelAnimationFrame(animationFrameId); // 애니메이션 프레임 중지
+            animationFrameId = null; // ID 초기화
+            mouseRabbit.style.display = 'none';
+            mouseRabbit.classList.remove('final-swings');
+            mouseRabbit.style.transform = 'translateX(-50%) rotateZ(0deg)';
+            lastMouseX = 0; // lastMouseX도 초기화
+        });
+        
+        // 마우스가 화면으로 다시 들어올 때 토끼를 다시 보이게 함
+        document.addEventListener('mouseenter', (e) => {
+            if (mouseRabbit.style.display === 'none') {
+                mouseRabbit.style.display = 'block';
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                lastMouseX = mouseX; // 마우스 재진입 시 lastMouseX 초기화
+                if (animationFrameId === null) {
+                    animationFrameId = requestAnimationFrame(updateRabbitPosition);
+                }
+                // 비활동 타이머 재설정
+                clearTimeout(inactivityTimeout);
+                inactivityTimeout = setTimeout(() => {
+                    mouseRabbit.classList.add('final-swings');
+                    setTimeout(() => {
+                        mouseRabbit.style.display = 'none';
+                        mouseRabbit.classList.remove('final-swings');
+                        mouseRabbit.style.transform = 'translateX(-50%) rotateZ(0deg)';
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }, 1500); // 1.4s + 여유 시간
+                }, INACTIVITY_TIME);
+            }
+        });
+
+        // 초기 슬라이드 번호 업데이트 (페이지 로드 시)
+        window.onload = function() {
+            updateSlide(currentSlide);
+        };
+    </script>
+</body>
+</html>
